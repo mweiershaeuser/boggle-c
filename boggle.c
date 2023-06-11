@@ -48,7 +48,9 @@ int main(int argc, char **argv)
             word = wordInput;
         }
 
-        OCCURRENCE finalOccurrences[strlen(word)];
+        int wordLength = strlen(word);
+        OCCURRENCE finalOccurrences[wordLength];
+
         int wordFound = validateWord(word, size, gridArray, finalOccurrences);
 
         if (wordFound == 0)
@@ -57,7 +59,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            highlightOccurrences(size, gridArray, strlen(word), finalOccurrences);
+            highlightOccurrences(size, gridArray, wordLength, finalOccurrences);
             outputGrid(grid, size, gridArray);
             exitLoop = 1;
         }
@@ -129,7 +131,6 @@ void generateGridArray(char *grid, long size, char (*gridArray)[size])
 
 int validateWord(char *word, long size, char gridArray[size][size], OCCURRENCE *finalOccurrences)
 {
-
     for (int i = 0; i < size; i++)
     {
         for (int j = 0; j < size; j++)
@@ -168,7 +169,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
         isLastCharacter = 1;
     }
 
-    // check character above
+    /* check character above */
     if (occurrence.row != 0)
     {
         if (gridArray[occurrence.row - 1][occurrence.column] == word[occurrence.characterIndex + 1])
@@ -195,7 +196,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
         }
     }
 
-    // check character below
+    /* check character below */
     if (occurrence.row != size)
     {
         if (gridArray[occurrence.row + 1][occurrence.column] == word[occurrence.characterIndex + 1])
@@ -222,7 +223,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
         }
     }
 
-    // check character left
+    /* check character left */
     if (occurrence.column != 0)
     {
         if (gridArray[occurrence.row][occurrence.column - 1] == word[occurrence.characterIndex + 1])
@@ -249,7 +250,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
         }
     }
 
-    // check character right
+    /* check character right */
     if (occurrence.column != size)
     {
         if (gridArray[occurrence.row][occurrence.column + 1] == word[occurrence.characterIndex + 1])
@@ -289,9 +290,9 @@ void highlightOccurrences(long size, char (*gridArray)[size], int wordLength, OC
 
 void outputGrid(char *grid, long size, char gridArray[size][size])
 {
-    // character + space to the right + 3 characters space for pipe characters left and rigth and space left + newline
+    /* character + space to the right + 3 characters space for pipe characters left and rigth and space left + newline */
     int rowSize = (size * 2 + 4);
-    // characters per row for each row + a padding row at the top and bottom
+    /* characters per row for each row + a padding row at the top and bottom */
     int resultSize = rowSize * (size + 2);
 
     char result[resultSize];
