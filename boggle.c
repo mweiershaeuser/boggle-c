@@ -141,6 +141,12 @@ int validateWord(char *word, long size, char gridArray[size][size], OCCURRENCE *
                 occurrence.row = i;
                 occurrence.column = j;
 
+                if (strlen(word) == 1)
+                {
+                    finalOccurrences[0] = occurrence;
+                    return 1;
+                }
+
                 int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, occurrence);
 
                 if (wordFound == 1)
