@@ -17,6 +17,7 @@ void validateInput(char *, long);
 void generateGridArray(char *, long, char (*)[*]);
 int validateWord(char *, long, char[*][*], OCCURRENCE *);
 int findNeigbouringOccurence(char *, long, char[*][*], OCCURRENCE *, OCCURRENCE);
+void highlightOccurrences(long, char (*)[*], int, OCCURRENCE *);
 void outputGrid(char *, long, char[*][*]);
 
 int main(int argc, char **argv)
@@ -30,23 +31,37 @@ int main(int argc, char **argv)
     char gridArray[4][4];
     generateGridArray(grid, size, gridArray);
 
-    OCCURRENCE finalOccurrences[strlen(word)];
+    int exitLoop = 0;
 
     if (word[0] != '\0')
     {
-        int wordFound = validateWord(word, size, gridArray, finalOccurrences);
-        printf("Word found: %d\n", wordFound);
-        for (int i = 0; i < strlen(word); i++)
+        exitLoop = 1;
+    }
+
+    do
+    {
+        if (exitLoop == 0)
         {
-            printf("Occurence { characterIndex: %d, row: %d, column: %d}\n", finalOccurrences[i].characterIndex, finalOccurrences[i].row, finalOccurrences[i].column);
+            outputGrid(grid, size, gridArray);
+            char wordInput[20];
+            scanf("%19s", wordInput);
+            word = wordInput;
         }
 
-        outputGrid(grid, size, gridArray);
-    }
-    else
-    {
-        exit(0);
-    }
+        OCCURRENCE finalOccurrences[strlen(word)];
+        int wordFound = validateWord(word, size, gridArray, finalOccurrences);
+
+        if (wordFound == 0)
+        {
+            printf("The word '%s' is not in the grid.\n", word);
+        }
+        else
+        {
+            highlightOccurrences(size, gridArray, strlen(word), finalOccurrences);
+            outputGrid(grid, size, gridArray);
+            exitLoop = 1;
+        }
+    } while (exitLoop == 0);
 
     return EXIT_SUCCESS;
 }
@@ -256,6 +271,14 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
     }
 
     return 0;
+}
+
+void highlightOccurrences(long size, char (*gridArray)[size], int wordLength, OCCURRENCE *finalOccurrences)
+{
+    for (int i = 0; i < wordLength; i++)
+    {
+        gridArray[finalOccurrences[i].row][finalOccurrences[i].column] = toupper(gridArray[finalOccurrences[i].row][finalOccurrences[i].column]);
+    }
 }
 
 void outputGrid(char *grid, long size, char gridArray[size][size])
