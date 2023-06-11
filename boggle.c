@@ -1,12 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define ERROR_CODE 84
+
+typedef struct Occurrence
+{
+    int characterIndex;
+    int row;
+    int column;
+} OCCURRENCE;
 
 void handleInput(int, char **, char **, char **, long *);
 void validateInput(char *, long);
 void generateGridArray(char *, long, char (*)[*]);
+int validateWord(char *, long, char[*][*], OCCURRENCE *);
+int findNeigbouringOccurence(char *, long, char[*][*], OCCURRENCE *, OCCURRENCE);
 void outputGrid(char *, long, char[*][*]);
 
 int main(int argc, char **argv)
@@ -20,14 +30,23 @@ int main(int argc, char **argv)
     char gridArray[4][4];
     generateGridArray(grid, size, gridArray);
 
-    outputGrid(grid, size, gridArray);
+    OCCURRENCE finalOccurrences[strlen(word)];
 
-    /* Handle not given word
-        if (word[0] == '\0')
+    if (word[0] != '\0')
+    {
+        int wordFound = validateWord(word, size, gridArray, finalOccurrences);
+        printf("Word found: %d\n", wordFound);
+        for (int i = 0; i < strlen(word); i++)
         {
-            printf("Es ist null!");
+            printf("Occurence { characterIndex: %d, row: %d, column: %d}\n", finalOccurrences[i].characterIndex, finalOccurrences[i].row, finalOccurrences[i].column);
         }
-    */
+
+        outputGrid(grid, size, gridArray);
+    }
+    else
+    {
+        exit(0);
+    }
 
     return EXIT_SUCCESS;
 }
@@ -93,6 +112,152 @@ void generateGridArray(char *grid, long size, char (*gridArray)[size])
     }
 }
 
+int validateWord(char *word, long size, char gridArray[size][size], OCCURRENCE *finalOccurrences)
+{
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            if (gridArray[i][j] == word[0])
+            {
+                OCCURRENCE occurrence;
+                occurrence.characterIndex = 0;
+                occurrence.row = i;
+                occurrence.column = j;
+
+                int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, occurrence);
+
+                if (wordFound == 1)
+                {
+                    finalOccurrences[0] = occurrence;
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], OCCURRENCE *finalOccurrences, OCCURRENCE occurrence)
+{
+    int isLastCharacter = 0;
+    if (occurrence.characterIndex == (strlen(word) - 2))
+    {
+        isLastCharacter = 1;
+    }
+
+    // check character above
+    if (occurrence.row != 0)
+    {
+        if (gridArray[occurrence.row - 1][occurrence.column] == word[occurrence.characterIndex + 1])
+        {
+            OCCURRENCE nextOccurrence;
+            nextOccurrence.characterIndex = occurrence.characterIndex + 1;
+            nextOccurrence.row = occurrence.row - 1;
+            nextOccurrence.column = occurrence.column;
+
+            if (!isLastCharacter)
+            {
+                int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, nextOccurrence);
+                if (wordFound == 1)
+                {
+                    finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                    return 1;
+                }
+            }
+            else
+            {
+                finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                return 1;
+            }
+        }
+    }
+
+    // check character below
+    if (occurrence.row != size)
+    {
+        if (gridArray[occurrence.row + 1][occurrence.column] == word[occurrence.characterIndex + 1])
+        {
+            OCCURRENCE nextOccurrence;
+            nextOccurrence.characterIndex = occurrence.characterIndex + 1;
+            nextOccurrence.row = occurrence.row + 1;
+            nextOccurrence.column = occurrence.column;
+
+            if (!isLastCharacter)
+            {
+                int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, nextOccurrence);
+                if (wordFound == 1)
+                {
+                    finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                    return wordFound;
+                }
+            }
+            else
+            {
+                finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                return 1;
+            }
+        }
+    }
+
+    // check character left
+    if (occurrence.column != 0)
+    {
+        if (gridArray[occurrence.row][occurrence.column - 1] == word[occurrence.characterIndex + 1])
+        {
+            OCCURRENCE nextOccurrence;
+            nextOccurrence.characterIndex = occurrence.characterIndex + 1;
+            nextOccurrence.row = occurrence.row;
+            nextOccurrence.column = occurrence.column - 1;
+
+            if (!isLastCharacter)
+            {
+                int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, nextOccurrence);
+                if (wordFound)
+                {
+                    finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                    return 1;
+                }
+            }
+            else
+            {
+                finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                return 1;
+            }
+        }
+    }
+
+    // check character right
+    if (occurrence.column != size)
+    {
+        if (gridArray[occurrence.row][occurrence.column + 1] == word[occurrence.characterIndex + 1])
+        {
+            OCCURRENCE nextOccurrence;
+            nextOccurrence.characterIndex = occurrence.characterIndex + 1;
+            nextOccurrence.row = occurrence.row;
+            nextOccurrence.column = occurrence.column + 1;
+
+            if (!isLastCharacter)
+            {
+                int wordFound = findNeigbouringOccurence(word, size, gridArray, finalOccurrences, nextOccurrence);
+                if (wordFound)
+                {
+                    finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                    return 1;
+                }
+            }
+            else
+            {
+                finalOccurrences[nextOccurrence.characterIndex] = nextOccurrence;
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
 void outputGrid(char *grid, long size, char gridArray[size][size])
 {
     // character + space to the right + 3 characters space for pipe characters left and rigth and space left + newline
@@ -102,7 +267,7 @@ void outputGrid(char *grid, long size, char gridArray[size][size])
 
     char result[resultSize];
 
-    for (int i = 0; i < rowSize; i++)
+    for (int i = 0; i < (rowSize - 1); i++)
     {
         strcat(result, "+");
     }
@@ -123,7 +288,7 @@ void outputGrid(char *grid, long size, char gridArray[size][size])
         strcat(result, "|\n");
     }
 
-    for (int i = 0; i < rowSize; i++)
+    for (int i = 0; i < (rowSize - 1); i++)
     {
         strcat(result, "+");
     }
