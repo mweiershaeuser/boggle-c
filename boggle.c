@@ -295,7 +295,7 @@ void outputGrid(char *grid, long size, char gridArray[size][size])
     /* characters per row for each row + a padding row at the top and bottom */
     int resultSize = rowSize * (size + 2);
 
-    char result[resultSize];
+    char *result = (char *)malloc(resultSize * sizeof(char));
 
     for (int i = 0; i < (rowSize - 1); i++)
     {
@@ -325,4 +325,6 @@ void outputGrid(char *grid, long size, char gridArray[size][size])
     strcat(result, "\n");
 
     printf("%s", result);
+
+    free(result);
 }
