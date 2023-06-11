@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     handleInput(argc, argv, &grid, &word, &size);
     validateInput(grid, size);
 
-    char gridArray[4][4];
+    char gridArray[size][size];
     generateGridArray(grid, size, gridArray);
 
     int exitLoop = 0;
