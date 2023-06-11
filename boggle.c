@@ -116,6 +116,19 @@ void validateInput(char *grid, long size)
         fprintf(stderr, "Error: The amount of characters in the grid '%s' does not match the provided grid size of %ld.\n", grid, size);
         exit(ERROR_CODE);
     }
+    for (int i = 0; i < strlen(grid); i++)
+    {
+        if (isalpha(grid[i]) == 0)
+        {
+            fprintf(stderr, "Error: Grid has to be alphabetic.\n");
+            exit(ERROR_CODE);
+        }
+        if (islower(grid[i]) == 0)
+        {
+            fprintf(stderr, "Error: Grid has to be lowercase.\n");
+            exit(ERROR_CODE);
+        }
+    }
 }
 
 void generateGridArray(char *grid, long size, char (*gridArray)[size])
