@@ -210,7 +210,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
     }
 
     /* check character below */
-    if (occurrence.row != size)
+    if (occurrence.row != (size - 1))
     {
         if (gridArray[occurrence.row + 1][occurrence.column] == word[occurrence.characterIndex + 1])
         {
@@ -264,7 +264,7 @@ int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], 
     }
 
     /* check character right */
-    if (occurrence.column != size)
+    if (occurrence.column != (size - 1))
     {
         if (gridArray[occurrence.row][occurrence.column + 1] == word[occurrence.characterIndex + 1])
         {
