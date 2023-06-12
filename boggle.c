@@ -18,11 +18,11 @@ void generateGridArray(char *, long, char (*)[*]);
 int validateWord(char *, long, char[*][*], OCCURRENCE *);
 int findNeigbouringOccurence(char *, long, char[*][*], OCCURRENCE *, OCCURRENCE);
 void highlightOccurrences(long, char (*)[*], int, OCCURRENCE *);
-void outputGrid(char *, long, char[*][*]);
+void outputGrid(long, char[*][*]);
 
 int main(int argc, char **argv)
 {
-    char *grid, *word = "", *result;
+    char *grid, *word = "";
     long size = 4;
 
     handleInput(argc, argv, &grid, &word, &size);
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
     {
         if (exitLoop == 0)
         {
-            outputGrid(grid, size, gridArray);
+            outputGrid(size, gridArray);
             char wordInput[20];
             scanf("%19s", wordInput);
             word = wordInput;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         else
         {
             highlightOccurrences(size, gridArray, wordLength, finalOccurrences);
-            outputGrid(grid, size, gridArray);
+            outputGrid(size, gridArray);
             exitLoop = 1;
         }
     } while (exitLoop == 0);
@@ -111,12 +111,12 @@ void handleInput(int argc, char **argv, char **grid, char **word, long *size)
 
 void validateInput(char *grid, long size)
 {
-    if (strlen(grid) != (size * size))
+    if ((long)strlen(grid) != (size * size))
     {
         fprintf(stderr, "Error: The amount of characters in the grid '%s' does not match the provided grid size of %ld.\n", grid, size);
         exit(ERROR_CODE);
     }
-    for (int i = 0; i < strlen(grid); i++)
+    for (int i = 0; i < (int)strlen(grid); i++)
     {
         if (isalpha(grid[i]) == 0)
         {
@@ -177,7 +177,7 @@ int validateWord(char *word, long size, char gridArray[size][size], OCCURRENCE *
 int findNeigbouringOccurence(char *word, long size, char gridArray[size][size], OCCURRENCE *finalOccurrences, OCCURRENCE occurrence)
 {
     int isLastCharacter = 0;
-    if (occurrence.characterIndex == (strlen(word) - 2))
+    if (occurrence.characterIndex == (int)(strlen(word) - 2))
     {
         isLastCharacter = 1;
     }
@@ -301,7 +301,7 @@ void highlightOccurrences(long size, char (*gridArray)[size], int wordLength, OC
     }
 }
 
-void outputGrid(char *grid, long size, char gridArray[size][size])
+void outputGrid(long size, char gridArray[size][size])
 {
     /* character + space to the right + 3 characters space for pipe characters left and rigth and space left + newline */
     int rowSize = (size * 2 + 4);
