@@ -2,6 +2,8 @@
   "files.associations": {
     "stdlib.h": "c",
     "string.h": "c",
-    "initializer_list": "c"
-  }
+    "initializer_list": "c",
+    "stdio.h": "c"
+  },
+  "editor.defaultFormatter": "ms-vscode.cpptools"
 }
